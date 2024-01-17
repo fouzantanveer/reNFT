@@ -33,42 +33,42 @@ To audit the reNFT project, I implemented a structured approach that combined a 
 6. **Analyzing External Reports ([4naly3er report](https://github.com/code-423n4/2024-01-renft/blob/main/4naly3er-report.md))**: This report provided an alternate perspective on potential vulnerabilities. Key insights were the emphasis on the robustness of rental wallet security and the importance of accurate rental asset tracking.
 
 7. **Foundry Testing:**
-
-Foundry, a modern smart contract testing framework, was utilized to test the reNFT contracts. This involved several key steps:
-
-a. **Installation and Setup:**
-   - Foundry was installed using the command `curl -L https://foundry.paradigm.xyz | bash`, followed by `foundryup` to ensure the latest version was in use.
-   - Dependencies were installed using `forge install`, ensuring all necessary components were available for the testing process.
-
-b. **Execution of Tests:**
-   - Tests were run using `forge test`, executing a suite of predefined test cases that covered various functionalities and scenarios within the reNFT contracts.
-   - A gas report was generated using `forge test --gas-report`. This report provided insights into the gas efficiency of the contracts, which is crucial for optimizing transaction costs on the blockchain.
-
-c. **Test Coverage and Documentation:**
-   - The overview of the testing suite, as referred to in the provided documentation, likely details the scope, scenarios, and objectives of each test, ensuring a comprehensive assessment of the contracts.
-
-**Slither Static Analysis:**
-
-Slither, a static analysis tool, was employed to identify vulnerabilities in the Solidity code:
-
-a. **Slither Setup:**
-   - Slither was installed using `pip3 install slither-analyzer`, preparing the tool for analysis.
    
-b. **Analysis Execution:**
-   - Running `slither .` on the project directory executed static analysis across all contracts, detecting potential issues and vulnerabilities.
-
-c. **Review and Response to Findings:**
-   - The output of Slither, especially the default detectors, provided insights into lower-risk or common vulnerability patterns. Responses to these findings, documented by the reNFT team, helped in understanding how these potential issues were addressed or mitigated.
-
-**Analysis and Testing Insights:**
-
-Through this testing process, several key insights about the reNFT project emerged:
-
-- **Robustness of Contracts:** The range of tests conducted using Foundry suggested a thorough examination of the contracts under various conditions, ensuring their robustness and reliability.
-- **Gas Efficiency:** The gas reports indicated the contracts' efficiency, an essential aspect given the transaction cost considerations on Ethereum-based platforms.
-- **Security Posture:** The use of Slither for static analysis highlighted the team's proactive approach to security, identifying and addressing vulnerabilities before deployment.
-- **Continuous Improvement:** The response to Slither's findings and the iterative testing approach suggested a commitment to continuous improvement and adaptation to emerging security challenges in the smart contract space.
-In conclusion, the testing and analysis process for reNFT demonstrated a comprehensive and security-focused approach, reinforcing confidence in the integrity and reliability of the project's contracts.
+   Foundry, a modern smart contract testing framework, was utilized to test the reNFT contracts. This involved several key steps:
+   
+   a. **Installation and Setup:**
+      - Foundry was installed using the command `curl -L https://foundry.paradigm.xyz | bash`, followed by `foundryup` to ensure the latest version was in use.
+      - Dependencies were installed using `forge install`, ensuring all necessary components were available for the testing process.
+   
+   b. **Execution of Tests:**
+      - Tests were run using `forge test`, executing a suite of predefined test cases that covered various functionalities and scenarios within the reNFT contracts.
+      - A gas report was generated using `forge test --gas-report`. This report provided insights into the gas efficiency of the contracts, which is crucial for optimizing transaction costs on the blockchain.
+   
+   c. **Test Coverage and Documentation:**
+      - The overview of the testing suite, as referred to in the provided documentation, likely details the scope, scenarios, and objectives of each test, ensuring a comprehensive assessment of the contracts.
+   
+   **Slither Static Analysis:**
+   
+   Slither, a static analysis tool, was employed to identify vulnerabilities in the Solidity code:
+   
+   a. **Slither Setup:**
+      - Slither was installed using `pip3 install slither-analyzer`, preparing the tool for analysis.
+      
+   b. **Analysis Execution:**
+      - Running `slither .` on the project directory executed static analysis across all contracts, detecting potential issues and vulnerabilities.
+   
+   c. **Review and Response to Findings:**
+      - The output of Slither, especially the default detectors, provided insights into lower-risk or common vulnerability patterns. Responses to these findings, documented by the reNFT team, helped in understanding how these potential issues were addressed or mitigated.
+   
+   **Analysis and Testing Insights:**
+   
+   Through this testing process, several key insights about the reNFT project emerged:
+   
+   - **Robustness of Contracts:** The range of tests conducted using Foundry suggested a thorough examination of the contracts under various conditions, ensuring their robustness and reliability.
+   - **Gas Efficiency:** The gas reports indicated the contracts' efficiency, an essential aspect given the transaction cost considerations on Ethereum-based platforms.
+   - **Security Posture:** The use of Slither for static analysis highlighted the team's proactive approach to security, identifying and addressing vulnerabilities before deployment.
+   - **Continuous Improvement:** The response to Slither's findings and the iterative testing approach suggested a commitment to continuous improvement and adaptation to emerging security challenges in the smart contract space.
+   In conclusion, the testing and analysis process for reNFT demonstrated a comprehensive and security-focused approach, reinforcing confidence in the integrity and reliability of the project's contracts.
 
 Throughout the audit process, my focus was on identifying discrepancies between the project's intended functionality and its actual implementation, assessing adherence to security best practices, and evaluating the overall robustness of the codebase. The combination of meticulous code review, understanding known vulnerabilities, analyzing external insights, and rigorous testing formed the foundation of a comprehensive audit.
 
@@ -158,3 +158,27 @@ In analyzing the reNFT project from a software engineering perspective, several 
 
 5. **Error Handling and Reversion Patterns**: The project employs custom error messages (via the `Errors.sol` library), improving debuggability and user experience. This practice is preferable over generic failure messages and should be consistently applied across the project.
 
+## Risks related to the project
+In the reNFT project, various risks can be identified:
+
+1. **Admin Abuse Risks**: 
+   Functions in `Admin.sol` like setting fees or toggling whitelist statuses are powerful. If the `ADMIN_ADMIN` role is compromised or misused, it could lead to unfavorable changes in protocol parameters, affecting user experience and trust.
+
+2. **Systemic Risks**: 
+   The centralized data management in `Storage.sol` implies that issues in this contract (like bugs or downtimes) can have widespread implications across the entire platform.
+
+3. **Technical Risks**: 
+   Complex logic, especially in contracts like `Create.sol`, which handles intricate rental transactions, is susceptible to bugs or exploits. `Create.sol:` This contract is responsible for initializing rental orders. Its complex logic, involving interactions with external contracts like Seaport and handling various item types (ERC-721/ERC-1155), poses a risk. Mismanagement or bugs in the processing of orders, especially in functions that convert Seaport order items to rental items, could lead to incorrect asset handling or vulnerabilities in asset transfer logic.
+
+   `Stop.sol:` This contract deals with stopping rentals and reclaiming assets. The complexity lies in ensuring that assets are returned correctly and securely to the original owners and managing ERC20 payments. Any flaws in functions that handle these operations, such as asset reclamation or payment settlements, could potentially be exploited, leading to loss of assets or incorrect fund distribution.
+   
+   `Guard.sol:` It guards transactions originating from rental wallets. Vulnerabilities could arise from how it manages whitelists or restrictions on function selectors. For example, incorrect handling of whitelisted addresses or allowed function selectors could open up possibilities for unauthorized asset transfers or malicious module activations.
+[![Technical-Risks.png](https://i.postimg.cc/2jsGdbdx/Technical-Risks.png)](https://postimg.cc/7bNSwLWC)
+4. **Integration Risks**: 
+   Dependencies on external contracts, such as Seaport, introduce risks. Any updates or issues in these external contracts can directly impact the reNFT's functionalities.
+
+5. **Non-standard Token Risks**: 
+   The handling of ERC20 tokens in contracts like `PaymentEscrow.sol` might not be fully compatible with non-standard tokens (e.g., rebasing or fee-on-transfer tokens), which could lead to incorrect processing of token transfers or balances.
+
+In essence, while each of these risks is manageable, they represent areas where the project should exercise caution and implement robust monitoring and mitigation strategies.
+[![Risks.png](https://i.postimg.cc/2Sr3Yq95/Risks.png)](https://postimg.cc/HVvT4LgG)
