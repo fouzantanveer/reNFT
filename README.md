@@ -13,20 +13,21 @@ In contrast, the `Kernel.sol` contract, acting as the ecosystem's nucleus, orche
 
 Here is the tabular analysis of the code files of project
 
-| Filename                 | Language  | Lines | nSLOC | Comments | Blank | Total |
-|--------------------------|-----------|-------|-------|----------|-------|-------|
-| `scope/Accumulator.sol`  | Solidity  | 52    | 72    | 23       | 147   |
-| `scope/Admin.sol`        | Solidity  | 77    | 81    | 19       | 177   |
-| `scope/Create.sol`       | Solidity  | 422   | 273   | 82       | 777   |
-| `scope/Create2Deployer.sol` | Solidity  | 53    | 56    | 13       | 122   |
-| `scope/Factory.sol`      | Solidity  | 92    | 82    | 21       | 195   |
-| `scope/Guard.sol`        | Solidity  | 201   | 144   | 35       | 380   |
-| `scope/Kernel.sol`       | Solidity  | 238   | 286   | 94       | 618   |
-| `scope/PaymentEscrow.sol`| Solidity  | 185   | 202   | 47       | 434   |
-| `scope/Reclaimer.sol`    | Solidity  | 41    | 49    | 13       | 103   |
-| `scope/Signer.sol`       | Solidity  | 233   | 136   | 41       | 410   |
-| `scope/Stop.sol`         | Solidity  | 181   | 139   | 46       | 366   |
-| `scope/Storage.sol`      | Solidity  | 130   | 193   | 51       | 374   |
+| File                        | Language | Code | Comment | Blank | Total |
+|-----------------------------|----------|------|---------|-------|-------|
+| `src/policies/Accumulator.sol` | Solidity | 52   | 72      | 23    | 147   |
+| `src/policies/Admin.sol`       | Solidity | 77   | 81      | 19    | 177   |
+| `src/policies/Create.sol`      | Solidity | 422  | 273     | 82    | 777   |
+| `src/policies/Create2Deployer.sol` | Solidity | 53   | 56      | 13    | 122   |
+| `src/policies/Factory.sol`     | Solidity | 92   | 82      | 21    | 195   |
+| `src/policies/Guard.sol`       | Solidity | 201  | 144     | 35    | 380   |
+| `src/policies/Kernel.sol`      | Solidity | 238  | 286     | 94    | 618   |
+| `src/policies/PaymentEscrow.sol` | Solidity | 185  | 202     | 47    | 434   |
+| `src/policies/Reclaimer.sol`   | Solidity | 41   | 49      | 13    | 103   |
+| `src/policies/Signer.sol`      | Solidity | 233  | 136     | 41    | 410   |
+| `src/policies/Stop.sol`        | Solidity | 181  | 139     | 46    | 366   |
+| `src/policies/Storage.sol`     | Solidity | 130  | 193     | 51    | 374   |
+
 
 
 
