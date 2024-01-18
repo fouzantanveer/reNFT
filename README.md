@@ -86,6 +86,7 @@ Throughout the audit process, my focus was on identifying discrepancies between 
 
 #### State Diagram:
 [![State.png](https://i.postimg.cc/43jzP3kH/State.png)](https://postimg.cc/f3jtTDbM)
+
 The class diagram for the reNFT project illustrates the relationships between key components. At the top level, there's the `Kernel`, which acts as a central registry and controller for policies and modules. `Module` and `Policy` are abstract classes, with `Policy` being extended by specific contracts like `Create`, `Stop`, `Guard`, `Admin`, and `Factory`. These policies define various functionalities of the system, from rental creation (`Create`) to rental termination (`Stop`) and security (`Guard`). `Admin` manages administrative tasks, and `Factory` is involved in deploying rental safes. `Storage` and `PaymentEscrow` are modules used by policies for data storage and payment handling, respectively. `Create2Deployer` is a utility for deploying contracts. The diagram demonstrates a structured, modular approach in the reNFT project, emphasizing separation of concerns and clear responsibilities among different components.
 
 The reNFT platform is a comprehensive system for NFT rentals, structured around a series of interconnected smart contracts. Each contract plays a pivotal role in facilitating user interactions and managing the rental process, ensuring a seamless and secure experience.
@@ -131,10 +132,15 @@ The **Create.sol** contract is central to starting the rental process. As users 
 
 #### Factory.sol - Safe Deployment:
 In **Factory.sol**, the focus is on deploying rental safes, a key element in the rental process. This contract ensures that each rental transaction has a secure and dedicated environment, enhancing user trust in the platform. The `deployRentalSafe()` function in this contract is instrumental for creating rental safes, key to managing rental transactions. This function first ensures the specified threshold, which dictates the number of signatures required for executing transactions on the safe, is valid. It then makes a critical delegate call to initialize the safe with necessary policies, particularly the stop policy and guard policy, by invoking the `initializeRentalSafe` function. This step is crucial to equip the rental safe with appropriate safeguards.
+
 Next, the function constructs an initializer payload tailored for a Gnosis Safe setup. This payload encapsulates essential details like owners, threshold, and fallback manager address. Utilizing the Gnosis Safe Proxy Factory, the function then deploys a new safe proxy using this payload and a unique salt nonce, ensuring the safe's address uniqueness across different chains.
-Post deployment, the safe's address is registered within the `Factory` contract's storage. This registration is vital for the protocol's recognition and subsequent management of the safe. Finally, the function broadcasts an event to signal the successful deployment of the rental safe, including relevant details such as the safe's address, its owners, and the threshold. This comprehensive process, governed by the `deployRentalSafe()` function, thus ensures a standardized, secure, and efficient setup for rental safes, integral to the functionality of the reNFT ecosystem. 
+
 UML diagram of `deployRentalSafe()` is given below for better understanding:
+
 [![Deploy-UML.png](https://i.postimg.cc/9f97MvGc/Deploy-UML.png)](https://postimg.cc/Jy1nYY6F)
+
+
+Post deployment, the safe's address is registered within the `Factory` contract's storage. This registration is vital for the protocol's recognition and subsequent management of the safe. Finally, the function broadcasts an event to signal the successful deployment of the rental safe, including relevant details such as the safe's address, its owners, and the threshold. This comprehensive process, governed by the `deployRentalSafe()` function, thus ensures a standardized, secure, and efficient setup for rental safes, integral to the functionality of the reNFT ecosystem. 
 
 #### Guard.sol - Transaction Security:
 **Guard.sol** acts as a safeguard for transactions originating from rental wallets, ensuring that assets within these wallets are securely managed and only authorized transactions are processed.
