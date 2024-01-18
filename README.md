@@ -193,6 +193,8 @@ In the reNFT project, various risks can be identified:
    `Stop.sol:` This contract deals with stopping rentals and reclaiming assets. The complexity lies in ensuring that assets are returned correctly and securely to the original owners and managing ERC20 payments. Any flaws in functions that handle these operations, such as asset reclamation or payment settlements, could potentially be exploited, leading to loss of assets or incorrect fund distribution.
    
    `Guard.sol:` It guards transactions originating from rental wallets. Vulnerabilities could arise from how it manages whitelists or restrictions on function selectors. For example, incorrect handling of whitelisted addresses or allowed function selectors could open up possibilities for unauthorized asset transfers or malicious module activations.
+
+   
 [![Technical-Risks.png](https://i.postimg.cc/2jsGdbdx/Technical-Risks.png)](https://postimg.cc/7bNSwLWC)
 
 
