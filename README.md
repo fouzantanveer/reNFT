@@ -3,6 +3,8 @@ The reNFT project introduces a unique concept in the NFT world, allowing NFT own
 On the other side are the renters - users who want to use NFTs temporarily. This could be for various reasons, like gaming or temporarily boosting a digital collection. Renting NFTs is a cost-effective solution for them, as it provides access to valuable digital assets without the need for a large upfront investment.
 What makes reNFT stand out is its integration with the Seaport protocol, ensuring a smooth and secure transaction process. This integration manages the transfer of NFTs between lenders and renters efficiently and safely, providing a reliable platform for both parties to transact. In short, reNFT is transforming how NFTs are utilized, offering innovative solutions for owners and enthusiasts alike.
 
+[![graphviz-1.png](https://i.postimg.cc/VNY0M7c8/graphviz-1.png)](https://postimg.cc/nXPLfGzR)
+
 ## Approach taken in Evaluating codebase
 
 To audit the reNFT project, I implemented a structured approach that combined a thorough review of the provided documentation, an in-depth code analysis, an understanding of publicly known issues, insights from external reports, and comprehensive testing. Here's the detailed process:
@@ -73,6 +75,10 @@ To audit the reNFT project, I implemented a structured approach that combined a 
 Throughout the audit process, my focus was on identifying discrepancies between the project's intended functionality and its actual implementation, assessing adherence to security best practices, and evaluating the overall robustness of the codebase. The combination of meticulous code review, understanding known vulnerabilities, analyzing external insights, and rigorous testing formed the foundation of a comprehensive audit.
 
 ## Technical Architecture of reNFT:
+
+#### State Diagram:
+[![State.png](https://i.postimg.cc/43jzP3kH/State.png)](https://postimg.cc/f3jtTDbM)
+The class diagram for the reNFT project illustrates the relationships between key components. At the top level, there's the `Kernel`, which acts as a central registry and controller for policies and modules. `Module` and `Policy` are abstract classes, with `Policy` being extended by specific contracts like `Create`, `Stop`, `Guard`, `Admin`, and `Factory`. These policies define various functionalities of the system, from rental creation (`Create`) to rental termination (`Stop`) and security (`Guard`). `Admin` manages administrative tasks, and `Factory` is involved in deploying rental safes. `Storage` and `PaymentEscrow` are modules used by policies for data storage and payment handling, respectively. `Create2Deployer` is a utility for deploying contracts. The diagram demonstrates a structured, modular approach in the reNFT project, emphasizing separation of concerns and clear responsibilities among different components.
 
 The reNFT platform is a comprehensive system for NFT rentals, structured around a series of interconnected smart contracts. Each contract plays a pivotal role in facilitating user interactions and managing the rental process, ensuring a seamless and secure experience.
 
@@ -182,3 +188,98 @@ In the reNFT project, various risks can be identified:
 
 In essence, while each of these risks is manageable, they represent areas where the project should exercise caution and implement robust monitoring and mitigation strategies.
 [![Risks.png](https://i.postimg.cc/2Sr3Yq95/Risks.png)](https://postimg.cc/HVvT4LgG)
+
+## Additional Recommendations
+Enhancing validation in `Guard.sol`, specifically in the `_checkTransaction` function, involves implementing a more robust compliance check for the ERC-721 and ERC-1155 token standards. Here's a technical approach to achieve this:
+
+1. **Interface Compliance Check**: Implement a function to check if a token contract implements the ERC-721 or ERC-1155 interface. This can be done by calling the `supportsInterface` function, which is a part of the ERC-165 standard that both ERC-721 and ERC-1155 implement. For instance:
+
+   ```solidity
+   function isERC721(address token) internal view returns (bool) {
+       return IERC165(token).supportsInterface(type(IERC721).interfaceId);
+   }
+
+   function isERC1155(address token) internal view returns (bool) {
+       return IERC165(token).supportsInterface(type(IERC1155).interfaceId);
+   }
+   ```
+
+2. Enhancing validation in `Guard.sol`, specifically in the `_checkTransaction` function, involves implementing a more robust compliance check for the ERC-721 and ERC-1155 token standards. Here's a technical approach to achieve this:
+
+   **Interface Compliance Check**: Implement a function to check if a token contract implements the ERC-721 or ERC-1155 interface. This can be done by calling the `supportsInterface` function, which is a part of the ERC-165 standard that both ERC-721 and ERC-1155 implement. For instance:
+
+   ```solidity
+   function isERC721(address token) internal view returns (bool) {
+       return IERC165(token).supportsInterface(type(IERC721).interfaceId);
+   }
+
+   function isERC1155(address token) internal view returns (bool) {
+       return IERC165(token).supportsInterface(type(IERC1155).interfaceId);
+   }
+   ```
+
+     **Enhanced Transaction Validation**: In the `_checkTransaction` function, use the above compliance checks before processing ERC-721 or ERC-1155 related transactions. For example:
+   
+      ```solidity
+      if (selector == e721_safe_transfer_from_selector) {
+          require(isERC721(to), "Invalid ERC721 token");
+          // existing logic...
+      } else if (selector == e1155_safe_transfer_from_selector) {
+          require(isERC1155(to), "Invalid ERC1155 token");
+          // existing logic...
+      }
+      ```
+
+3. Refactoring the `deployRentalSafe` function in `Factory.sol` involves splitting its complex logic into smaller, focused functions for enhanced clarity and maintainability. This process includes creating distinct functions for validating the threshold requirement, constructing the initializer payload for the Gnosis safe setup, and handling the actual deployment of the safe proxy. Each function should have a clear, descriptive name and be accompanied by comprehensive documentation. After refactoring, thorough unit testing for each new function is essential to ensure their individual and integrated functionality within the `deployRentalSafe` process. This approach makes the codebase more readable, easier to debug, and simplifies future updates or maintenance efforts.
+This approach ensures that the `Guard.sol` contract only interacts with compliant ERC-721 and ERC-1155 tokens, thus mitigating risks associated with non-standard implementations. Additionally, regular audits and reviews of the contract's interaction with token contracts can further enhance security.
+
+4. Integrating circuit breakers or a pause mechanism into `Admin.sol`, specifically for functions like `freezeStorage` and `freezePaymentEscrow`, would enhance security. This can be achieved by adding a `paused` state variable and a modifier to check this state. The modifier would prevent function execution when the contract is paused:
+   
+   ```solidity
+   bool private paused = false;
+   
+   modifier whenNotPaused() {
+       require(!paused, "Contract is paused");
+       _;
+   }
+   
+   function pause() external onlyRole("ADMIN_ADMIN") {
+       paused = true;
+   }
+   
+   function unpause() external onlyRole("ADMIN_ADMIN") {
+       paused = false;
+   }
+   
+   function freezeStorage() external onlyRole("ADMIN_ADMIN") whenNotPaused {
+       // existing logic
+   }
+   
+   function freezePaymentEscrow() external onlyRole("ADMIN_ADMIN") whenNotPaused {
+       // existing logic
+   }
+   ```
+   This design allows the admin to halt critical functionalities in emergencies, thus preventing potential exploits or damage when vulnerabilities are detected. The implementation should ensure that the pause functionality is well-protected and accessible only to authorized roles to prevent misuse.
+
+5. In `Create.sol`, specifically in the function `_processBaseOrderOffer`, there's potential for optimization in the loop that processes each offer item. Here's a technical breakdown and recommendation:
+
+   The loop iterates over the `offers` array to handle ERC721 and ERC1155 items. One optimization strategy could be pre-computing and storing frequently accessed values, such as `itemType`, outside the loop. This reduces the need for repeated calculations or lookups within each iteration, saving gas:
+
+   ```solidity
+   for (uint256 i; i < offers.length; ++i) {
+       SpentItem memory offer = offers[i];
+       
+       // Potential optimization: Pre-compute common conditions or values here
+   
+       if (offer.isERC721()) {
+           // Logic for ERC721
+       } else if (offer.isERC1155()) {
+           // Logic for ERC1155
+       } else {
+           // Error handling
+       }
+   }
+   ```
+      
+      This optimization targets the repeated checks within the loop, such as `offer.isERC721()` and `offer.isERC1155()`, potentially reducing the computational cost of these operations. However, it's crucial to balance readability and maintainability with optimization. Each optimization should be thoroughly tested to ensure it doesn't introduce new issues or complexities.
+
