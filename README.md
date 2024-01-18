@@ -11,6 +11,25 @@ After a thorough examination of the reNFT codebase, a key observation is the bal
 
 In contrast, the `Kernel.sol` contract, acting as the ecosystem's nucleus, orchestrates modules and policies with a high degree of interconnectivity. This complexity is offset by a clear modular structure and well-commented code, enhancing maintainability. The modular structure of the reNFT project, particularly evident in the `Kernel.sol` contract, is a standout feature. This contract effectively serves as the central hub, managing various modules and policies. Each module and policy is treated as an independent component, allowing for separation of concerns and easier maintenance. This modular approach is not only evident in the organizational structure of the contracts but also in how they interact with each other. Each module, identified by a unique keycode, can be independently installed, upgraded, or interacted with, while policies can request permissions for specific actions. This design facilitates scalability and flexibility, allowing for seamless integration of new features or updates without disrupting the entire system. The clarity and thoroughness of the code comments further aid in understanding the purpose and functionality of each part, contributing to the overall maintainability of the system.
 
+Here is the tabular analysis of the code files of project
+
+| Filename                 | Language  | Lines | nSLOC | Comments | Blank | Total |
+|--------------------------|-----------|-------|-------|----------|-------|-------|
+| `scope/Accumulator.sol`  | Solidity  | 52    | 72    | 23       | 147   |
+| `scope/Admin.sol`        | Solidity  | 77    | 81    | 19       | 177   |
+| `scope/Create.sol`       | Solidity  | 422   | 273   | 82       | 777   |
+| `scope/Create2Deployer.sol` | Solidity  | 53    | 56    | 13       | 122   |
+| `scope/Factory.sol`      | Solidity  | 92    | 82    | 21       | 195   |
+| `scope/Guard.sol`        | Solidity  | 201   | 144   | 35       | 380   |
+| `scope/Kernel.sol`       | Solidity  | 238   | 286   | 94       | 618   |
+| `scope/PaymentEscrow.sol`| Solidity  | 185   | 202   | 47       | 434   |
+| `scope/Reclaimer.sol`    | Solidity  | 41    | 49    | 13       | 103   |
+| `scope/Signer.sol`       | Solidity  | 233   | 136   | 41       | 410   |
+| `scope/Stop.sol`         | Solidity  | 181   | 139   | 46       | 366   |
+| `scope/Storage.sol`      | Solidity  | 130   | 193   | 51       | 374   |
+
+
+
 These observations reflect a codebase that, while technically sophisticated and functionally rich, still presents opportunities for refinement, especially in enhancing performance and ensuring long-term maintainability.
 
 ## Approach taken in Evaluating codebase
