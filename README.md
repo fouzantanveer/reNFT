@@ -194,13 +194,17 @@ In the reNFT project, various risks can be identified:
    
    `Guard.sol:` It guards transactions originating from rental wallets. Vulnerabilities could arise from how it manages whitelists or restrictions on function selectors. For example, incorrect handling of whitelisted addresses or allowed function selectors could open up possibilities for unauthorized asset transfers or malicious module activations.
 [![Technical-Risks.png](https://i.postimg.cc/2jsGdbdx/Technical-Risks.png)](https://postimg.cc/7bNSwLWC)
-4. **Integration Risks**: 
+
+
+5. **Integration Risks**: 
    Dependencies on external contracts, such as Seaport, introduce risks. Any updates or issues in these external contracts can directly impact the reNFT's functionalities.
 
-5. **Non-standard Token Risks**: 
+6. **Non-standard Token Risks**: 
    The handling of ERC20 tokens in contracts like `PaymentEscrow.sol` might not be fully compatible with non-standard tokens (e.g., rebasing or fee-on-transfer tokens), which could lead to incorrect processing of token transfers or balances.
 
 In essence, while each of these risks is manageable, they represent areas where the project should exercise caution and implement robust monitoring and mitigation strategies.
+
+
 [![Risks.png](https://i.postimg.cc/2Sr3Yq95/Risks.png)](https://postimg.cc/HVvT4LgG)
 
 ## Additional Recommendations
