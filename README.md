@@ -114,6 +114,14 @@ The reNFT platform is a comprehensive system for NFT rentals, structured around 
 #### Kernel.sol - System Governance:
 The **Kernel.sol** contract acts as the administrative center. Its `executeAction` function is pivotal in modifying system configurations, such as installing new modules or updating policies. When users initiate a transaction, this function might be called to ensure that the system's settings align with the current operational requirements.
 
+
+[![Kernal.png](https://i.postimg.cc/jjydkRqY/Kernal.png)](https://postimg.cc/4KNgYkhW)
+
+
+
+The diagram depicts the architectural structure of `Kernel.sol` and its interaction with other core components within the reNFT ecosystem. The `Kernel` acts as the central registry, coordinating between `Modules` and `Policies`. It shows that `Modules` communicate internally with `Kernel`, which then orchestrates the policies through the `KernelAdapter`. Policies define the rules and behaviors for different operations and interact with `Kernel` to carry out those operations, while `Kernel` also handles errors through the `Errors` contract and logs activities via `Events`. The `Keycode` facilitates the identification and interaction of specific modules within the system. 
+
+
 #### Storage.sol - Record Keeping:
 **Storage.sol** is essential for maintaining the integrity of rental records. Functions like `addRentals` and `removeRentals` are crucial for tracking active rentals and removing them post-completion. The `addRentals` and `removeRentals` functions in the reNFT architecture play pivotal roles beyond their surface-level code functionality. They are not just about adding or removing data entries; they embody the core dynamics of the rental process within the reNFT ecosystem.
 
