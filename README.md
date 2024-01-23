@@ -27,6 +27,21 @@ Understood, let's dive deeper into the architecture of Decent, focusing on the u
 
 ## Architecture
 
+[![advance.png](https://i.postimg.cc/KjK0CZ81/advance.png)](https://postimg.cc/y3HhZC9K)
+
+Explanation:
+
+**User Interaction: Represents the initial user action that triggers the process.
+- UTB Contract: The central contract that receives the user's call.
+- Action Determination: The UTB contract determines whether the action is a swap or a bridge.
+- Swapper and Bridge Adapter Contracts: Depending on the action, it interacts with either the Swapper or the Bridge Adapter.
+- Token Swap and Bridge Logic: The respective contract executes its core logic, either swapping tokens or bridging them to another chain.
+- Execution of Transaction: After the swap/bridge, the transaction needs to be executed.
+- UTB Executor Contract: This contract is responsible for executing the transaction.
+- Transaction Success or Failure: The outcome of the transaction is determined.
+- Completion and Reversion Logic: Depending on the outcome, the process either completes the transaction or handles reversion/refunds.
+- User Balance/Status Update: Finally, the user's balance or status is updated, and feedback is provided.
+**
 ### Sequence Diagram of important functions
 
 [![UML.png](https://i.postimg.cc/xdVt7yKS/UML.png)](https://postimg.cc/K1QP3Tq9)
