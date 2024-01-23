@@ -27,7 +27,7 @@ Understood, let's dive deeper into the architecture of Decent, focusing on the u
 
 ## Architecture
 
-### UML
+### Sequence Diagram of important functions
 
 [![UML.png](https://i.postimg.cc/xdVt7yKS/UML.png)](https://postimg.cc/K1QP3Tq9)
 
@@ -129,9 +129,26 @@ Both `swapAndExecute` and `bridgeAndExecute` embody the essence of Decent's cros
 In summary, Decent's architecture is a sophisticated web of smart contracts each designed for specific roles yet collectively working towards a seamless cross-chain transaction experience. From initiating transactions in `UTB` to executing actions on destination chains via `UTBExecutor` and `DecentBridgeExecutor`, the system harmonizes different blockchain operations under one umbrella. The design reflects a deep understanding of cross-chain dynamics and user needs in the blockchain space.
 
 
-After an in-depth analysis of the Decent project's codebase, it's clear that the quality is robust, showcasing a thoughtful architecture and intricate inter-function logic. The codebase demonstrates a sophisticated understanding of blockchain mechanics, especially in terms of cross-chain interactions.
+
 
 ## Quality of Codebase:
+
+After an in-depth analysis of the Decent project's codebase, it's clear that the quality is Excellent, showcasing thoughtful architecture and intricate inter-function logic. The codebase demonstrates a sophisticated understanding of blockchain mechanics, especially in terms of cross-chain interactions.
+
+| filename                     | language | code | comment | blank | total |
+|------------------------------|----------|------|---------|-------|-------|
+| Scope/BaseAdapter.sol        | Solidity | 16   | 1       | 6     | 23    |
+| Scope/DcntEth.sol            | Solidity | 27   | 4       | 9     | 40    |
+| Scope/DecentBridgeAdapter.sol| Solidity | 137  | 1       | 22    | 160   |
+| Scope/DecentBridgeExecutor.sol| Solidity| 57   | 19      | 14    | 90    |
+| Scope/DecentEthRouter.sol    | Solidity | 290  | 13      | 38    | 341   |
+| Scope/StargateBridgeAdapter.sol| Solidity| 190 | 3       | 29    | 222   |
+| Scope/SwapParams.sol         | Solidity | 13   | 5       | 3     | 21    |
+| Scope/UTB.sol                | Solidity | 232  | 79      | 32    | 343   |
+| Scope/UTBExecutor.sol        | Solidity | 52   | 20      | 11    | 83    |
+| Scope/UTBFeeCollector.sol    | Solidity | 50   | 20      | 11    | 81    |
+| Scope/UniSwapper.sol         | Solidity | 145  | 3       | 27    | 175   |
+
 
 1. **Modularity and Readability:**
    - The code is well-structured and modular. Functions and contracts are purposefully segmented, enhancing readability and maintainability. This modularity is evident in the separation of concerns between contracts like `UTB`, `UTBExecutor`, and various adapters.
@@ -260,3 +277,29 @@ Understanding the technical importance of resource management in the context of 
 - **Evidence in Project**: Functions like `swapAndExecute` and `bridgeAndExecute` orchestrate a sequence of actions, including token swaps and cross-chain bridges. If gas estimation for these sequences is not accurate, especially under varying network conditions, it could lead to incomplete transactions, thereby affecting the reliability of the service.
 
 In essence, for software engineers working on the Decent project, focusing on these aspects is not just about optimizing gas costs; it's about ensuring the reliability, efficiency, and user experience of the platform. The challenge lies in managing the complex interplay of contract interactions, state management, and dynamic gas estimations, all crucial for the seamless operation of a cross-chain DeFi platform.
+
+## Weakspots
+
+There's potential risk for MEV or transaction frontrun in collectFees()
+
+### Analysis of the `collectFees` Function:
+
+1. **Function Implementation**: 
+   - The `collectFees` function, typically part of a fee management system in blockchain projects, is designed to handle the collection and possibly the redistribution of transaction fees. 
+   - In Decent's `UTBFeeCollector.sol`, the function takes the fee details and a signature as parameters. It verifies the signature, ensuring the fee collection request is legitimate.
+
+2. **Funds Transfer and Adjusting Fee Parameters**:
+   - The function does involve transferring ERC20 tokens as part of fee collection. It's essential to verify if this transfer is from a user to the contract (which is less risky) or involves more sensitive transfers (like redistributing funds to other parties).
+
+3. **MEV and Frontrunning Risks**:
+   - MEV risks primarily arise when there's potential for transaction order manipulation to yield profit. In `collectFees`, if the function transfers fees to different parties or adjusts fee parameters, it might be a potential target for such attacks.
+   - Frontrunning risks could occur if attackers can foresee profitable outcomes from the execution of `collectFees` (e.g., fee distribution) and preemptively submit their transactions.
+
+4. **Lack of Deadline Parameter**:
+   - The absence of a deadline or a similar mechanism in `collectFees` does not directly expose it to MEV or frontrunning if the function's internal logic doesn't involve operations where transaction ordering can be exploited for profit.
+   - However, if the function influences other contract states or financial distributions in a way that could be gamed, then not having a temporal constraint might increase the risk.
+
+### Impact and Consideration:
+
+- If `collectFees` is strictly for collecting fees without influencing other contract states or financial distributions significantly, the lack of a deadline might not pose a high risk.
+- However, if the function has a broader impact – for example, it triggers other financial operations or state changes – then the absence of a deadline could make it more susceptible to MEV and frontrunning. 
